@@ -32,8 +32,8 @@ model = RandomForestRegressor(
 
 model.fit(X_train, y_train)
 
-df["cases_lag_1"] = df.groupby("city")["total_cases"].shift(1)
-df["cases_lag_2"] = df.groupby("city")["total_cases"].shift(2)
+#df["cases_lag_1"] = df.groupby("city")["total_cases"].shift(1)
+#df["cases_lag_2"] = df.groupby("city")["total_cases"].shift(2)
 
 test_df = pd.read_csv("test.csv")
 
@@ -42,3 +42,17 @@ test_df = test_df.drop(columns=["week_start_date"])
 test_df = test_df.fillna(test_df.mean(numeric_only=True))
 
 test_preds = model.predict(test_df)
+
+# Output the train error rate
+print("error rate for training set: ", model.score(X_train, y_train))
+# Output the test error rate
+print("error rate for validation set: ", model.score(X_val, y_val))
+
+# turn test_preds into dataframe and produce the CSV file named "rf_prediction.csv"
+rf = pd.DataFrame(
+    {
+        "id": test_df.iloc[:,0],
+        "target_variable": test_preds
+    }    
+)
+rf.to_csv("rf_prediction.csv", index=False)
