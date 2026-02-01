@@ -2,6 +2,9 @@ import pandas as pd
 import csv
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import Ridge
+from sklearn.linear_model import Lasso
 
 df = pd.read_csv("train.csv")
 print("head: \n", df.head())
@@ -56,3 +59,73 @@ rf = pd.DataFrame(
     }    
 )
 rf.to_csv("rf_prediction.csv", index=False)
+
+# Multiple Linear Regression below:
+
+# fit the multiple linear regression
+linear = LinearRegression()
+linear.fit(X_train, y_train)
+test_preds = linear.predict(test_df)
+
+# Evaluate the model
+# Output the train error rate
+print("error rate for training set: ", linear.score(X_train, y_train))
+# Output the test error rate
+print("error rate for validation set: ", linear.score(X_val, y_val))
+
+# turn test_preds into dataframe and produce the CSV file named "linear_prediction.csv"
+linear_df = pd.DataFrame(
+    {
+        "id": test_df.iloc[:,0],
+        "target_variable": test_preds
+    }    
+)
+linear_df.to_csv("linear_prediction.csv", index=False)
+
+
+# Ridge regression below:
+
+# Fit the ridge regression model
+ridge = Ridge() 
+ridge.fit(X_train, y_train)
+
+# Output the train error rate
+print("ridge regression:")
+print("error rate for training set: ", ridge.score(X_train, y_train))
+# Output the test error rate
+print("error rate for validation set: ", ridge.score(X_val, y_val))
+
+# get the final prediction
+test_preds = ridge.predict(test_df)
+
+# turn test_preds into dataframe and produce the CSV file named "ridge_prediction.csv"
+ridge_df = pd.DataFrame(
+    {
+        "id": test_df.iloc[:,0],
+        "target_variable": test_preds
+    }    
+)
+ridge_df.to_csv("ridge_prediction.csv", index=False)
+
+
+# LASSO regression below:
+
+# Fit the LASSO regression model
+lasso = Lasso() # AI suggested alpha=0.1
+lasso.fit(X_train, y_train)
+
+# Output the train error rate
+print("error rate for training set: ", lasso.score(X_train, y_train))
+# Output the test error rate
+print("error rate for validation set: ", lasso.score(X_val, y_val))
+
+test_preds = lasso.predict(test_df)
+
+# turn test_preds into dataframe and produce the CSV file named "rf_prediction.csv"
+lasso_df = pd.DataFrame(
+    {
+        "id": test_df.iloc[:,0],
+        "target_variable": test_preds
+    }    
+)
+lasso_df.to_csv("lasso_prediction.csv", index=False)
